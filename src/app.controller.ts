@@ -15,15 +15,4 @@ export class AppController {
     private authService: AuthService
   ) { }
 
-  @Public()
-  @UseGuards(AuthGuard('local'))
-  @Post('/login')
-  handleLogin(@Request() req) {
-    return this.authService.login(req.user);
-  }
-
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
-  }
 }

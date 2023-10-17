@@ -8,6 +8,7 @@ import { genSaltSync, hashSync, compareSync } from 'bcrypt';
 // Khai báo như này vì import bcrypt và dùng hàm thì lỗi - Lỗi của thư viện
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from './users.interface';
+import aqp from 'api-query-params';
 
 @Injectable()
 export class UsersService {
@@ -59,9 +60,40 @@ export class UsersService {
     return result;
   }
 
-  async findAll() {
-    const listUsers = await this.userModel.find({});
-    return listUsers;
+  async findAll(page: number, limit: number, rq: string) {
+    // const query = aqp(queryString);
+    // const offset = (currentPage - 1) * limit;
+    // delete query.filter.page;
+    // return await this.companyModel.find(query.filter).skip(offset).limit(limit).populate('createdBy');
+
+    const { filter, projection, population } = aqp(rq);
+    let { sort } = aqp(rq);
+    let offset = (+page - 1) * (+limit);
+    let defaultLimit = +limit ? +limit : 10; // Không truyền limit set mặc định: 10
+
+    delete filter.current;
+    delete filter.pageSize;
+
+    const totalItems = (await this.userModel.find(filter)).length; // Tổng SL bản ghi TM
+    const totalPages = Math.ceil(totalItems / defaultLimit); // Số trang cần để hiển thị hết bản ghi
+
+    const result = await this.userModel.find(filter)
+      .skip(offset)
+      .limit(defaultLimit)
+      // @ts-ignore: Unreachable code error
+      .sort(sort)
+      .populate(population)
+      .exec()
+
+    return {
+      meta: {
+        current: page,
+        pageSize: limit,
+        pages: totalPages,
+        total: totalItems
+      },
+      result
+    }
   }
 
   async findOne(id: string) {
@@ -111,6 +143,10 @@ export class UsersService {
   }
 
   updateUserToken = async (refreshToken: string, _id: string) => {
-    return await this.userModel.updateOne({_id}, {refreshToken})
+    return await this.userModel.updateOne({ _id }, { refreshToken })
+  }
+
+  findUserByToken = async (refreshToken: string) => {
+    return await this.userModel.findOne({ refreshToken })
   }
 }

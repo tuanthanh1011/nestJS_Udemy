@@ -34,8 +34,8 @@ export class CompaniesService {
     let offset = (+page - 1) * (+limit);
     let defaultLimit = +limit ? +limit : 10; // Không truyền limit set mặc định: 10
 
-    delete filter.page;
-    delete filter.limit;
+    delete filter.current;
+    delete filter.pageSize;
 
     const totalItems = (await this.companyModel.find(filter)).length; // Tổng SL bản ghi TM
     const totalPages = Math.ceil(totalItems / defaultLimit); // Số trang cần để hiển thị hết bản ghi
@@ -50,14 +50,14 @@ export class CompaniesService {
 
     return {
       meta: {
-        current: page, //trang hiện tại
-        pageSize: limit, //số lượng bản ghi đã lấy
-        pages: totalPages, //tổng số trang với điều kiện query
-        total: totalItems // tổng số phần tử (số bản ghi)
+        current: page,
+        pageSize: limit,
+        pages: totalPages,
+        total: totalItems
       },
-      result //kết quả query
+      result
     }
-   }
+  }
 
   findOne(id: number) {
     return `This action returns a #${id} company`;

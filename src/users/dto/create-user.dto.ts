@@ -5,10 +5,11 @@ import mongoose from 'mongoose';
 
 class Company {
     @IsNotEmpty()
-    id: mongoose.Schema.Types.ObjectId;
+    _id: mongoose.Schema.Types.ObjectId;
 
     @IsNotEmpty()
-    name: string
+    name: string;
+
 }
 
 export class CreateUserDto {

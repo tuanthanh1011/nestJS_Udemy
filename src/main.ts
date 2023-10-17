@@ -20,18 +20,18 @@ async function bootstrap() {
 
   app.useStaticAssets(join(__dirname, '..', 'public')); // JS, CSS, IMAGES
   app.setBaseViewsDir(join(__dirname, '..', 'views')); // VIEW
-  app.setViewEngine('ejs');
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   // config cookieParser
   app.use(cookieParser());
 
   //config cors
   app.enableCors({
-    "origin": "*", // Cấu hình địa chỉ nào có thể truy cập, * là bất kỳ. Ngoài ra Vd: http://localhost:3000
+    "origin": true, // Cấu hình địa chỉ nào có thể truy cập, * là bất kỳ. Ngoài ra Vd: http://localhost:3000
     "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
     "preflightContinue": false,
+    credentials: true
   })
 
   // config versioning
