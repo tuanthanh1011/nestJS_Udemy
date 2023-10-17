@@ -9,7 +9,6 @@ class Company {
 
     @IsNotEmpty()
     name: string;
-
 }
 
 export class CreateUserDto {
