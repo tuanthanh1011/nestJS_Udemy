@@ -158,14 +158,14 @@ export class AuthService {
                         secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET')
                     }
                 );
+                if (payload.role.name === 'HR') {
+                    let user: any = await this.usersService.findOne(payload._id);
+                    let companyByUser = user.company;
+                    return companyByUser._id as string;
+                }
             }
         }
 
-        if (payload.role.name === 'HR') {
-            let user: any = await this.usersService.findOne(payload._id);
-            let companyByUser = user.company;
-            return companyByUser._id as string;
-        }
         return '';
     }
 }
