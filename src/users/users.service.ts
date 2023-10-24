@@ -62,11 +62,11 @@ export class UsersService {
       name, email, password: hassPassword, age, gender, address,
       role: userRole?._id,
     })
-    let result = {
+    
+    return {
       _id: user?._id,
       createdAt: user?.createdAt
     };
-    return result;
   }
 
   async findAll(page: number, limit: number, rq: string) {

@@ -37,8 +37,7 @@ export class AuthService {
     }
 
     async registerUser(registerUser: RegisterUserDto) {
-        const result = await this.usersService.register(registerUser);
-        return { result };
+        return await this.usersService.register(registerUser);
     }
 
     async login(user: IUser, response: Response) {
