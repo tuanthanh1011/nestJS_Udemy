@@ -7,7 +7,6 @@ import mongoose, { Model } from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from 'src/users/users.interface';
 import aqp from 'api-query-params';
-import { filter } from 'rxjs';
 
 @Injectable()
 export class CompaniesService {

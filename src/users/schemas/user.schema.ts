@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
+import { Role } from 'src/roles/schema/role.schema';
 
 export type UserDocument = HydratedDocument<User>;
 //  định nghĩa một kiểu UserDocument, là một loại dữ liệu (type) tương tự với kiểu Document của Mongoose.
@@ -31,8 +32,8 @@ export class User {
     email: string
   };
 
-  @Prop()
-  role: string;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Role.name })
+  role: mongoose.Schema.Types.ObjectId;
 
   @Prop()
   refreshToken: string

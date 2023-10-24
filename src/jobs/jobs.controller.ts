@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Req } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { Public, ResponseMessage, User } from 'src/decorator/customize';
 import { IUser } from 'src/users/users.interface';
+import { Request } from 'express';
 
 @Controller('jobs')
 export class JobsController {
@@ -15,15 +16,16 @@ export class JobsController {
     return this.jobsService.create(createJobDto, user);
   }
 
-  @ResponseMessage("FETCH LIST COMPANY")
+  @ResponseMessage("FETCH LIST JOB")
   @Get()
   @Public()
   findAll(
     @Query("current") currentPage: string,
     @Query("pageSize") limit: string,
-    @Query() queryString: string // Không truyền gì hiểu là lấy tất cả
+    @Query() queryString: string, // Không truyền gì hiểu là lấy tất cả
+    @Req() req: Request
   ) {
-    return this.jobsService.findAll(+currentPage, +limit, queryString);
+    return this.jobsService.findAll(+currentPage, +limit, queryString, req);
   }
 
   @ResponseMessage("Fetch user by id")

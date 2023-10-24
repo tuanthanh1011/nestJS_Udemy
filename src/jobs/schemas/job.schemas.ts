@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { isNotEmpty } from "class-validator";
 import mongoose, { HydratedDocument } from 'mongoose';
 
-export type CatDocument = HydratedDocument<Job>;
+export type JobDocument = HydratedDocument<Job>;
 
 @Schema({ timestamps: true })
 export class Job {

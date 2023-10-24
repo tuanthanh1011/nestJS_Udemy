@@ -7,10 +7,15 @@ import mongoose, { Model } from 'mongoose';
 import { IUser } from 'src/users/users.interface';
 import aqp from 'api-query-params';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
+import { AuthService } from 'src/auth/auth.service';
+import { Request } from 'express';
 
 @Injectable()
 export class ResumesService {
-  constructor(@InjectModel(Resume.name) private resumeModel: SoftDeleteModel<ResumeDocument>) { }
+  constructor(
+    @InjectModel(Resume.name) private resumeModel: SoftDeleteModel<ResumeDocument>,
+    private authService: AuthService
+  ) { }
 
   async create(createResumeDto: CreateUserCvDto, user: IUser) {
     let resume = await this.resumeModel.create({
@@ -39,14 +44,19 @@ export class ResumesService {
     };
   }
 
-  async findAll(page: number, limit: number, rq: string) {
-    const { filter, projection, population } = aqp(rq);
+  async findAll(page: number, limit: number, rq: string, req: Request) {
+    let { filter, projection, population } = aqp(rq);
     let { sort } = aqp(rq);
     let offset = (+page - 1) * (+limit);
     let defaultLimit = +limit ? +limit : 10; // Không truyền limit set mặc định: 10
 
     delete filter.current;
     delete filter.pageSize;
+
+    let addFilter = await this.authService.handleFetchByHR(req);
+
+    if (addFilter)
+      filter = { ...filter, 'companyId': addFilter }
 
     const totalItems = (await this.resumeModel.find(filter)).length; // Tổng SL bản ghi TM
     const totalPages = Math.ceil(totalItems / defaultLimit); // Số trang cần để hiển thị hết bản ghi
@@ -118,8 +128,16 @@ export class ResumesService {
   async findByUsers(user: IUser) {
     let resume = await this.resumeModel.find({
       userId: user._id
-    })
-    console.log(resume, user._id) 
+    }).sort("createdAt").populate([
+      {
+        path: "companyId",
+        select: { name: 1 }
+      },
+      {
+        path: "jobId",
+        select: { name: 1 }
+      }
+    ])
     return resume;
   }
 }

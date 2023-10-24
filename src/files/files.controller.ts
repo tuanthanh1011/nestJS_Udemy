@@ -16,7 +16,7 @@ export class FilesController {
     new ParseFilePipeBuilder()
       .addFileTypeValidator({
         // fileType: /(jpg|jpeg|png|image\/png|gif|txt|pdf|doc|docx|application\/vnd.openxmlformats-officedocument.wordprocessingml.document|text\/plain)$/i,
-        fileType: /(jpg|jpeg|png|image\/png|image\/jpeg)$/i,
+        fileType: /(jpg|jpeg|png|image\/png|image\/jpeg|pdf)$/i,
       })
       .addMaxSizeValidator({
         maxSize: 1024 * 1024 // KB = 1MB
