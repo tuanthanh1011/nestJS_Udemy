@@ -6,7 +6,11 @@ import { RegisterUserDto } from "src/users/dto/create-user.dto";
 import { IUser } from "src/users/users.interface";
 import { Request, Response } from "express";
 import { RolesService } from "src/roles/roles.service";
+import { LocalAuthGuard } from "./local-auth.guard";
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler'
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags("auth")
 @Controller("auth")
 export class AuthController {
     constructor(
@@ -14,10 +18,11 @@ export class AuthController {
         private rolesService: RolesService
     ) { }
 
-    @ResponseMessage("Login successfully!")
     @Public()
-    @UseGuards(AuthGuard('local'))
+    @UseGuards(LocalAuthGuard)
+    @UseGuards(ThrottlerGuard)
     @Post('/login')
+    @ResponseMessage("Login successfully!")
     handleLogin(@Req() req, @Res({ passthrough: true }) response: Response) {
         return this.authService.login(req.user, response);
     }
@@ -30,6 +35,7 @@ export class AuthController {
     }
 
     @ResponseMessage("Get user information")
+    @UseGuards(ThrottlerGuard)
     @Get('/account')
     async handleGetAccount(@User() user: IUser) {
         const temp = await this.rolesService.findOne(user.role._id) as any;

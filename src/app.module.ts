@@ -17,9 +17,19 @@ import { RolesModule } from './roles/roles.module';
 import { DatabasesModule } from './databases/databases.module';
 import { SubscribersModule } from './subscribers/subscribers.module';
 import { MailModule } from './mail/mail.module';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard } from '@nestjs/throttler'
+import { ScheduleModule } from '@nestjs/schedule';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
+    ThrottlerModule.forRoot([{
+      ttl: 60000, // đơn vị: ms = 60s
+      limit: 2,
+    }]),
     MongooseModule.forRootAsync({
       imports: [ConfigModule], // Import ConfigModule
       useFactory: async (configService: ConfigService) => ({
@@ -34,6 +44,7 @@ import { MailModule } from './mail/mail.module';
     ConfigModule.forRoot({
       isGlobal: true, // module này dùng để cấu hình biến môi trường
     }),
+
     UsersModule,
     AuthModule,
     CompaniesModule,
@@ -44,7 +55,8 @@ import { MailModule } from './mail/mail.module';
     RolesModule,
     DatabasesModule,
     SubscribersModule,
-    MailModule
+    MailModule,
+    HealthModule
   ],
   controllers: [AppController],
   providers: [AppService],
