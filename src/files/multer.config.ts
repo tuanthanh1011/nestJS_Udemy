@@ -9,7 +9,10 @@ import path, { join } from 'path';
 @Injectable()
 export class MulterConfigService implements MulterOptionsFactory {
   getRootPath = () => {
-    return process.cwd();
+    const currentPath = __dirname;
+    const resumePath = path.resolve(currentPath, '../../public/images/resume');
+    console.log(resumePath);
+    return resumePath;
   };
   ensureExists(targetDirectory: string) {
     fs.mkdir(targetDirectory, { recursive: true }, (error) => {
@@ -39,9 +42,9 @@ export class MulterConfigService implements MulterOptionsFactory {
     return {
       storage: diskStorage({
         destination: (req, file, cb) => {
-          const folder = req?.headers?.folder_type ?? 'default';
-          this.ensureExists(`/public/images/${folder}`);
-          cb(null, join(this.getRootPath(), `/public/images/${folder}`));
+          // const folder = req?.headers?.folder_type ?? 'default';
+          // this.ensureExists(`public/images/${folder}`);
+          cb(null, join(this.getRootPath()));
         },
         filename: (req, file, cb) => {
           //get image extension
@@ -49,6 +52,7 @@ export class MulterConfigService implements MulterOptionsFactory {
           //get image's name (without extension)
           const baseName = path.basename(file.originalname, extName);
           const finalName = `${baseName}-${Date.now()}${extName}`;
+
           cb(null, finalName);
         },
       }),
