@@ -10,15 +10,18 @@ import aqp from 'api-query-params';
 
 @Injectable()
 export class CompaniesService {
-  constructor(@InjectModel(Company.name) private companyModel: SoftDeleteModel<CompanyDocument>) { }
+  constructor(
+    @InjectModel(Company.name)
+    private companyModel: SoftDeleteModel<CompanyDocument>,
+  ) {}
 
   async create(createCompanyDto: CreateCompanyDto, user: IUser) {
     return await this.companyModel.create({
       ...createCompanyDto,
       createdBy: {
         _id: user._id,
-        email: user.email
-      }
+        email: user.email,
+      },
     });
   }
 
@@ -29,9 +32,9 @@ export class CompaniesService {
     // return await this.companyModel.find(query.filter).skip(offset).limit(limit).populate('createdBy');
 
     const { filter, projection, population } = aqp(rq);
-    let { sort } = aqp(rq);
-    let offset = (+page - 1) * (+limit);
-    let defaultLimit = +limit ? +limit : 10; // Không truyền limit set mặc định: 10
+    const { sort } = aqp(rq);
+    const offset = (+page - 1) * +limit;
+    const defaultLimit = +limit ? +limit : 10; // Không truyền limit set mặc định: 10
 
     delete filter.current;
     delete filter.pageSize;
@@ -39,42 +42,45 @@ export class CompaniesService {
     const totalItems = (await this.companyModel.find(filter)).length; // Tổng SL bản ghi TM
     const totalPages = Math.ceil(totalItems / defaultLimit); // Số trang cần để hiển thị hết bản ghi
 
-    const result = await this.companyModel.find(filter)
+    const result = await this.companyModel
+      .find(filter)
       .skip(offset)
       .limit(defaultLimit)
       // @ts-ignore: Unreachable code error
       .sort(sort)
       .populate(population)
-      .exec()
+      .exec();
 
     return {
       meta: {
         current: page,
         pageSize: limit,
         pages: totalPages,
-        total: totalItems
+        total: totalItems,
       },
-      result
-    }
+      result,
+    };
   }
 
   async findOne(id: string) {
-    if (!mongoose.Types.ObjectId.isValid(id))
-      return 'Not found company';
+    if (!mongoose.Types.ObjectId.isValid(id)) return 'Not found company';
     const result = await this.companyModel.findOne({
-      _id: id
-    })
+      _id: id,
+    });
     return result;
   }
 
   async update(id: string, updateCompanyDto: UpdateCompanyDto, user: IUser) {
-    return await this.companyModel.updateOne({ _id: id }, {
-      ...updateCompanyDto,
-      updatedBy: {
-        _id: user._id,
-        email: user.email
-      }
-    });
+    return await this.companyModel.updateOne(
+      { _id: id },
+      {
+        ...updateCompanyDto,
+        updatedBy: {
+          _id: user._id,
+          email: user.email,
+        },
+      },
+    );
   }
 
   async remove(id: string, user: IUser) {
@@ -83,10 +89,10 @@ export class CompaniesService {
       {
         deletedby: {
           _id: user._id,
-          email: user.email
-        }
-      }
-    )
+          email: user.email,
+        },
+      },
+    );
     return this.companyModel.softDelete({ _id: id });
   }
 }

@@ -30,4 +30,4 @@ import { APP_GUARD } from '@nestjs/core';
   exports: [AuthService],
   controllers: [AuthController],
 })
-export class AuthModule { }
+export class AuthModule {}

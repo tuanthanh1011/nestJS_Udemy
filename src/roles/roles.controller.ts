@@ -1,14 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { ResponseMessage, User } from 'src/decorator/customize';
 import { IUser } from 'src/users/users.interface';
 import { ApiTags } from '@nestjs/swagger';
-@ApiTags("roles")
+@ApiTags('roles')
 @Controller('roles')
 export class RolesController {
-  constructor(private readonly rolesService: RolesService) { }
+  constructor(private readonly rolesService: RolesService) {}
 
   @Post()
   @ResponseMessage('Create a new role')
@@ -17,30 +26,34 @@ export class RolesController {
   }
 
   @Get()
-  @ResponseMessage("Fetch list roles")
+  @ResponseMessage('Fetch list roles')
   findAll(
-    @Query("current") currentPage: string,
-    @Query("pageSize") limit: string,
-    @Query() queryString: string // Không truyền gì hiểu là lấy tất cả
+    @Query('current') currentPage: string,
+    @Query('pageSize') limit: string,
+    @Query() queryString: string, // Không truyền gì hiểu là lấy tất cả
   ) {
     return this.rolesService.findAll(+currentPage, +limit, queryString);
   }
 
   @Get(':id')
-  @ResponseMessage("Fetch role by id")
+  @ResponseMessage('Fetch role by id')
   findOne(@Param('id') id: string) {
     return this.rolesService.findOne(id);
   }
 
   @Patch(':id')
   @ResponseMessage('Update a role')
-  update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto, @User() user: IUser) {
+  update(
+    @Param('id') id: string,
+    @Body() updateRoleDto: UpdateRoleDto,
+    @User() user: IUser,
+  ) {
     return this.rolesService.update(id, updateRoleDto, user);
   }
 
   @Delete(':id')
-  @ResponseMessage("Delete a role")
-  remove(@Param('id') id: string, @User() user:IUser) {
+  @ResponseMessage('Delete a role')
+  remove(@Param('id') id: string, @User() user: IUser) {
     return this.rolesService.remove(id, user);
   }
 }

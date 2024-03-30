@@ -29,32 +29,32 @@ export class User {
   @Prop({ type: Object })
   company: {
     _id: mongoose.Schema.Types.ObjectId;
-    email: string
+    email: string;
   };
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Role.name })
   role: mongoose.Schema.Types.ObjectId;
 
   @Prop()
-  refreshToken: string
+  refreshToken: string;
 
   @Prop({ type: Object })
   createdBy: {
     _id: mongoose.Schema.Types.ObjectId;
-    email: string
-  }
+    email: string;
+  };
 
   @Prop({ type: Object })
   updatedBy: {
     _id: mongoose.Schema.Types.ObjectId;
-    email: string
-  }
+    email: string;
+  };
 
   @Prop({ type: Object })
   deletedBy: {
     _id: mongoose.Schema.Types.ObjectId;
-    email: string
-  }
+    email: string;
+  };
 
   @Prop()
   createdAt: Date;
@@ -67,8 +67,7 @@ export class User {
 
   @Prop()
   deletedAt: Date;
-
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
-// Tạo một schema thực tế từ class "User". 
+// Tạo một schema thực tế từ class "User".

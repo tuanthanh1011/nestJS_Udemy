@@ -19,17 +19,19 @@ import { SubscribersModule } from './subscribers/subscribers.module';
 import { MailModule } from './mail/mail.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
-import { ThrottlerGuard } from '@nestjs/throttler'
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
 import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    ThrottlerModule.forRoot([{
-      ttl: 60000, // đơn vị: ms = 60s
-      limit: 2,
-    }]),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000, // Thời gian sống của mỗi yêu cầu, tính bằng mili giây (ms)
+        limit: 20, // Số lượng yêu cầu tối đa cho mỗi khoảng thời gian `ttl`
+      },
+    ]),
     MongooseModule.forRootAsync({
       imports: [ConfigModule], // Import ConfigModule
       useFactory: async (configService: ConfigService) => ({
@@ -37,7 +39,7 @@ import { HealthModule } from './health/health.module';
         connectionFactory: (connection) => {
           connection.plugin(softDeletePlugin);
           return connection;
-        }
+        },
       }),
       inject: [ConfigService],
     }),
@@ -56,10 +58,9 @@ import { HealthModule } from './health/health.module';
     DatabasesModule,
     SubscribersModule,
     MailModule,
-    HealthModule
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
-
+export class AppModule {}

@@ -11,8 +11,9 @@ import mongoose from 'mongoose';
 @Injectable()
 export class SubscribersService {
   constructor(
-    @InjectModel(Subscriber.name) private subcriberModel: SoftDeleteModel<SubcriberDocument>,
-  ) { }
+    @InjectModel(Subscriber.name)
+    private subcriberModel: SoftDeleteModel<SubcriberDocument>,
+  ) {}
 
   async create(createSubscriberDto: CreateSubscriberDto, user: IUser) {
     const { email } = createSubscriberDto;
@@ -24,21 +25,21 @@ export class SubscribersService {
       ...createSubscriberDto,
       createdBy: {
         _id: user._id,
-        email: user.email
-      }
+        email: user.email,
+      },
     });
   }
 
   async getSkills(user: IUser) {
     const { email } = user;
-    return await this.subcriberModel.findOne({ email }, { skills: 1 })
+    return await this.subcriberModel.findOne({ email }, { skills: 1 });
   }
 
   async findAll(page: number, limit: number, rq: string) {
     const { filter, projection, population } = aqp(rq);
-    let { sort } = aqp(rq);
-    let offset = (+page - 1) * (+limit);
-    let defaultLimit = +limit ? +limit : 10; // Không truyền limit set mặc định: 10
+    const { sort } = aqp(rq);
+    const offset = (+page - 1) * +limit;
+    const defaultLimit = +limit ? +limit : 10; // Không truyền limit set mặc định: 10
 
     delete filter.current;
     delete filter.pageSize;
@@ -46,44 +47,47 @@ export class SubscribersService {
     const totalItems = (await this.subcriberModel.find(filter)).length; // Tổng SL bản ghi TM
     const totalPages = Math.ceil(totalItems / defaultLimit); // Số trang cần để hiển thị hết bản ghi
 
-    const result = await this.subcriberModel.find(filter)
+    const result = await this.subcriberModel
+      .find(filter)
       .skip(offset)
       .limit(defaultLimit)
       // @ts-ignore: Unreachable code error
       .sort(sort)
       .populate(population)
-      .exec()
+      .exec();
 
     return {
       meta: {
         current: page,
         pageSize: limit,
         pages: totalPages,
-        total: totalItems
+        total: totalItems,
       },
-      result
-    }
+      result,
+    };
   }
 
   async findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id))
       throw new BadRequestException('Not found company');
     const result = await this.subcriberModel.findOne({
-      _id: id
-    })
+      _id: id,
+    });
     return result;
   }
 
   async update(updateSubscriberDto: UpdateSubscriberDto, user: IUser) {
     const { email } = user;
-    return await this.subcriberModel.updateOne({ email: email }, {
-      ...updateSubscriberDto,
-      updatedBy: {
-        _id: user._id,
-        email: user.email
-      }
-    },
-      { upsert: true }
+    return await this.subcriberModel.updateOne(
+      { email: email },
+      {
+        ...updateSubscriberDto,
+        updatedBy: {
+          _id: user._id,
+          email: user.email,
+        },
+      },
+      { upsert: true },
     );
   }
 
@@ -93,10 +97,10 @@ export class SubscribersService {
       {
         deletedby: {
           _id: user._id,
-          email: user.email
-        }
-      }
-    )
+          email: user.email,
+        },
+      },
+    );
     return this.subcriberModel.softDelete({ _id: id });
   }
 }

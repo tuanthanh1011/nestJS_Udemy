@@ -16,9 +16,9 @@ import { AuthModule } from 'src/auth/auth.module';
       global: true,
     }),
     UsersModule,
-    AuthModule
+    AuthModule,
   ],
   controllers: [JobsController],
-  providers: [JobsService]
+  providers: [JobsService],
 })
-export class JobsModule { }
+export class JobsModule {}

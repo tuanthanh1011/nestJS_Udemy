@@ -10,9 +10,7 @@ import cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(
-    AppModule,
-  );
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
 
   const reflector = app.get(Reflector);
@@ -29,17 +27,17 @@ async function bootstrap() {
 
   //config cors
   app.enableCors({
-    "origin": true, // Cấu hình địa chỉ nào có thể truy cập, * là bất kỳ. Ngoài ra Vd: http://localhost:3000
-    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-    "preflightContinue": false,
-    credentials: true
-  })
+    origin: true, // Cấu hình địa chỉ nào có thể truy cập, * là bất kỳ. Ngoài ra Vd: http://localhost:3000
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    credentials: true,
+  });
 
   // config versioning
   app.setGlobalPrefix('api');
   app.enableVersioning({
     type: VersioningType.URI,
-    defaultVersion: ['1'] // v1, v2
+    defaultVersion: ['1'], // v1, v2
   });
 
   const config = new DocumentBuilder()

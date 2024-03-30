@@ -6,8 +6,11 @@ import { Resume, ResumeSchema } from './schema/resume.schema';
 import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Resume.name, schema: ResumeSchema }]), AuthModule],
+  imports: [
+    MongooseModule.forFeature([{ name: Resume.name, schema: ResumeSchema }]),
+    AuthModule,
+  ],
   controllers: [ResumesController],
-  providers: [ResumesService]
+  providers: [ResumesService],
 })
-export class ResumesModule { }
+export class ResumesModule {}
