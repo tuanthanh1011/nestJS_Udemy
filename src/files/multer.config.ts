@@ -9,7 +9,6 @@ import path, { join } from 'path';
 @Injectable()
 export class MulterConfigService implements MulterOptionsFactory {
   getRootPath = () => {
-    console.log(process.cwd());
     return process.cwd();
   };
   ensureExists(targetDirectory: string) {
@@ -40,7 +39,7 @@ export class MulterConfigService implements MulterOptionsFactory {
     return {
       storage: diskStorage({
         destination: (req, file, cb) => {
-          const folder = req.headers.folder_type ?? 'default';
+          const folder = req.query.folder_type ?? 'default';
           // this.ensureExists(`public/images/${folder}`);
           cb(null, join(`public/images/${folder}`));
         },
