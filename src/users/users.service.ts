@@ -5,7 +5,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User as UserM, UserDocument } from './schemas/user.schema';
 import mongoose from 'mongoose';
 import { genSaltSync, hashSync, compareSync } from 'bcrypt';
-// Khai báo như này vì import bcrypt và dùng hàm thì lỗi - Lỗi của thư viện
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from './users.interface';
 import aqp from 'api-query-params';
